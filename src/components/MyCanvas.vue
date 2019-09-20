@@ -2,7 +2,7 @@
   <div id="myTest" class="layout">
     <v-stage class="myCanvas" ref="stage" :config="stageSize" @mousedown="handleStageMouseDown">
       <v-layer ref="layer">
-        <v-image v-for="item in layers" :key="item.id" :config="item" />
+        <v-image ref="imageLayer" v-for="item in layers" :key="item.id" :config="item" />
         <v-transformer ref="transformer" />
       </v-layer>
     </v-stage>
@@ -10,8 +10,9 @@
     <div class="bar">
       <span>Tools</span>
       <div class="btns">
-        <button @click="handleClick">Create Square</button>
-        <button @click="test">B...</button>
+        <button @click="createRect">Create Rect</button>
+        <button @click="brush">Brush</button>
+        <button @click="eraser">Eraser</button>
       </div>
 
       <span class="lay">Layers</span>
@@ -53,7 +54,10 @@ export default {
         width: width,
         height: height
       },
-      selectedShapeName: ""
+      selectedShapeName: "",
+      isPaint: false,
+      lastLine: "",
+      mode: "brush"
     };
   },
   methods: {
@@ -102,8 +106,8 @@ export default {
       transformerNode.getLayer().batchDraw();
     },
 
-    handleClick(e) {
-      const layer = this.$refs.layer.getStage()
+    createRect(e) {
+      const layer = this.$refs.layer.getStage();
       const newRect = new Konva.Rect({
         x: 0,
         y: 0,
@@ -113,16 +117,74 @@ export default {
         stroke: "black",
         strokeWidth: 4,
         draggable: true,
-        name:"Rect"
+        name: "Rect"
       });
 
       layer.add(newRect);
-      layer.draw()
+      layer.draw();
     },
 
-    test(e){
-      console.log(this.$refs.layer.getStage())
-    } 
+    brush(e) {
+      const stage = this.$refs.stage.getStage();
+      const layer = this.$refs.layer.getStage();
+      this.mode = "brush";
+      stage.on("mousedown touchstart", function(e) {
+        this.isPaint = true;
+        let pos = stage.getPointerPosition();
+        this.lastLine = new Konva.Line({
+          strokeWidth: 15,
+          stroke: "red",
+          globalCompositeOperation: "source-over",
+          points: [pos.x, pos.y]
+        });
+        layer.add(this.lastLine);
+      });
+
+      stage.on("mouseup touchend", function() {
+        this.isPaint = false;
+      });
+
+      stage.on("mousemove touchmove", function() {
+        if (!this.isPaint) {
+          return;
+        }
+        const pos = stage.getPointerPosition();
+        let newPoints = this.lastLine.points().concat([pos.x, pos.y]);
+        this.lastLine.points(newPoints);
+        layer.batchDraw();
+      });
+    },
+
+    eraser(e) {
+      const stage = this.$refs.stage.getStage();
+      const layer = this.$refs.layer.getStage();
+      this.mode = "eraser";
+      stage.on("mousedown touchstart", function(e) {
+        this.isPaint = true;
+        let pos = stage.getPointerPosition();
+        this.lastLine = new Konva.Line({
+          strokeWidth: 20,
+          stroke: "white",
+          globalCompositeOperation: "destination-out",
+          points: [pos.x, pos.y]
+        });
+        layer.add(this.lastLine);
+      });
+
+      stage.on("mouseup touchend", function() {
+        this.isPaint = false;
+      });
+
+      stage.on("mousemove touchmove", function() {
+        if (!this.isPaint) {
+          return;
+        }
+        const pos = stage.getPointerPosition();
+        let newPoints = this.lastLine.points().concat([pos.x, pos.y]);
+        this.lastLine.points(newPoints);
+        layer.batchDraw();
+      });
+    }
   },
   computed: {},
   created() {
@@ -159,7 +221,7 @@ export default {
 }
 
 .bar {
-  border: 2px solid red;
+  border: 2px solid #df4b26;
   margin-left: 1rem;
   width: 20vw;
   padding: 1rem;
