@@ -28,5 +28,6 @@ h1 {
 
 .layout {
     display: flex;
+    justify-content: center;
 }
 </style>
