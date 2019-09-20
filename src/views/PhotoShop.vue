@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Vista PhotoShop</h1>
+    <h1>NASAL CHALLENGE</h1>
     <div>
       <MyCanvas />
     </div>
