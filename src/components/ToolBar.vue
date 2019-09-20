@@ -1,11 +1,20 @@
 <template>
   <div class="bar">
-    ToolBar
+
+    <span>Tools</span>
     <div class="btns">
       <button>Add</button>
       <button>Add</button>
       <button>Add</button>
       <button>Add</button>
+    </div>
+
+    <span class="lay">Layers</span>
+    <div class="layers">
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
     </div>
   </div>
 </template>
@@ -33,6 +42,24 @@ export default {
   button {
     margin-top: 1rem;
     padding: 1rem;
+    &:last-of-type {
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+.layers {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  div {
+    display: flex;
+    border: 1px solid blue;
+    margin: 0 0 1rem 1rem;
+    width: 8vw;
+    height: 8vh;
+    align-items: center;
+    justify-content: center;
   }
 }
 
