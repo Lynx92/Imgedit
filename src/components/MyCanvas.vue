@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div id="myTest" class="layout">
     <v-stage class="myCanvas" ref="stage" :config="stageSize" @mousedown="handleStageMouseDown">
       <v-layer ref="layer">
         <v-image v-for="item in layers" :key="item.id" :config="item" />
@@ -10,15 +10,13 @@
     <div class="bar">
       <span>Tools</span>
       <div class="btns">
-        <button>A...</button>
-        <button>B...</button>
-        <!-- <button @click="addLayer">Duplicate Layer</button> -->
-        <!-- <button @click="removeLayer(index)">Remove Layer</button> -->
+        <button @click="handleClick">Create Square</button>
+        <button @click="test">B...</button>
       </div>
 
       <span class="lay">Layers</span>
       <ul class="layers">
-        <li v-for="layerPreview in layers" :key="layerPreview.id">{{layerPreview.id}}</li>
+        <li v-for="layerPreview in layers" :key="layerPreview.id">{{layerPreview.name}}</li>
       </ul>
     </div>
   </div>
@@ -31,16 +29,24 @@ const height = window.innerHeight / 1.2;
 export default {
   data() {
     return {
-      layerCounter: 1,
       layers: [
         {
           image: null,
           x: 100,
           y: 100,
-          width: 300,
-          height: 300,
+          width: 500,
+          height: 400,
           draggable: true,
-          name: "img1"
+          name: "Raya"
+        },
+        {
+          image: null,
+          x: 500,
+          y: 200,
+          width: 500,
+          height: 400,
+          draggable: true,
+          name: "Lynx"
         }
       ],
       stageSize: {
@@ -94,31 +100,31 @@ export default {
         transformerNode.detach();
       }
       transformerNode.getLayer().batchDraw();
-    }
+    },
 
-    // addLayer() {
-    //   // Añadir Capas
-    //   if (this.layers.length < 4) {
-    //     if (this.layers.indexOf(this.layerCounter) == -1) {
-    //       this.layers.push(this.layerCounter);
-    //     } else {
-    //       this.layerCounter++;
-    //       this.layers.push(this.layerCounter);
-    //     }
-    //   }
-    // }
+    handleClick(e) {
+      const layer = this.$refs.layer.getStage()
+      const newRect = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        fill: "green",
+        stroke: "black",
+        strokeWidth: 4,
+        draggable: true,
+        name:"Rect"
+      });
+
+      layer.add(newRect);
+      layer.draw()
+    },
+
+    test(e){
+      console.log(this.$refs.layer.getStage())
+    } 
   },
-  computed: {
-    // selectLayer(elem) {
-    //   this.selectedLayer = true;
-    // },
-    // removeLayer(index) {
-    //   if (this.layers.length > 0) {
-    //     this.layers.splice(index, 1);
-    //     this.layerCounter--;
-    //   }
-    // }
-  },
+  computed: {},
   created() {
     const image = new window.Image();
     image.src =
@@ -126,6 +132,13 @@ export default {
     image.onload = () => {
       // set image only when it is loaded
       this.layers[0].image = image;
+    };
+    const image2 = new window.Image();
+    image2.src =
+      "https://www.ahorasemanal.es/media/images/numero%2032/horizontal/CAP_00601417h.jpg";
+    image2.onload = () => {
+      // set image only when it is loaded
+      this.layers[1].image = image2;
     };
   }
 };
