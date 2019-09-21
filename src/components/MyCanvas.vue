@@ -20,7 +20,6 @@
         <button @click="brush">Brush</button>
         <button @click="eraser">Eraser</button>
         <button @click="crop">Crop</button>
-
         <button @click="download">Download</button>
       </div>
 
@@ -29,9 +28,9 @@
         <li v-for="(layerPreview, key) in layers" :key="layerPreview.id">
           {{layerPreview.name}}
           <div class="arrows">
-            <button @click="layerUp(layerPreview.name)">&#128316</button>
+            <button @click="layerUp(layerPreview.name)">&#128316;</button>
             <button @click="$delete(layers,key)">🗑️</button>
-            <button @click="layerDown(layerPreview.name)">&#128317</button>
+            <button @click="layerDown(layerPreview.name)">&#128317;</button>
           </div>
         </li>
       </ul>
@@ -237,7 +236,7 @@ export default {
   computed: {},
   created() {
     const image = new window.Image();
-    
+
     image.origin = "anonymous";
     image.src = require("../assets/stripe.jpg");
     image.onload = () => {
@@ -246,7 +245,7 @@ export default {
     };
     const image2 = new window.Image();
     image2.origin = "anonymous";
-    
+
     image2.src = require("../assets/lynx.jpg");
 
     image2.onload = () => {
