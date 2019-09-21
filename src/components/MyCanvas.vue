@@ -24,7 +24,14 @@
 
       <span class="lay">Layers</span>
       <ul class="layers">
-        <li v-for="layerPreview in layers" :key="layerPreview.id">{{layerPreview.name}}</li>
+        <li v-for="(layerPreview, key) in layers" :key="layerPreview.id">
+          {{layerPreview.name}}
+          <div class="arrows">
+            <button @click="layerUp(layers,key)">&#128316</button>
+            <button @click="$delete(layers,key)">🗑️</button>
+            <button @click="layerDown(layers,key)">&#128317</button>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
@@ -198,7 +205,18 @@ export default {
       pictu[0].setAttribute("crossOrigin", "anonymous");
       console.log(pictu[0]);
       pictu[0].toDataURL("image/png");
-    } //Can´t do because of CORS permission
+    }, //Can´t do because of CORS permission
+
+    layerUp(layerPreview,key) {
+      const layer = this.$refs.layer.getStage();
+      layerPreview.moveUp();
+      layer.draw();
+    },
+    layerDown(layerPreview,key) {
+      const layer = this.$refs.layer.getStage();
+      layerPreview.moveDown();
+      layer.draw();
+    }
   },
   computed: {},
   created() {
@@ -265,7 +283,7 @@ export default {
 
 .layers {
   display: flex;
-  flex-direction: row;
+  flex-direction: column-reverse;
   flex-wrap: wrap;
   list-style-type: none;
   align-items: center;
@@ -289,5 +307,11 @@ export default {
 
 .layerActive {
   background: rgba(0, 0, 255, 0.4);
+}
+
+.arrows {
+  margin-left: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>
