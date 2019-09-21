@@ -6,7 +6,7 @@
           crossorigin="anonymous"
           ref="imageLayer"
           v-for="item in layers"
-          :key="item.id"
+          :key="item.name"
           :config="item"
         />
         <v-transformer ref="transformer" />
@@ -19,7 +19,9 @@
         <button @click="createRect">Create Rect</button>
         <button @click="brush">Brush</button>
         <button @click="eraser">Eraser</button>
-        <!-- <button @click="download">Download</button> -->
+        <button @click="crop">Crop</button>
+
+        <button @click="download">Download</button>
       </div>
 
       <span class="lay">Layers</span>
@@ -27,9 +29,9 @@
         <li v-for="(layerPreview, key) in layers" :key="layerPreview.id">
           {{layerPreview.name}}
           <div class="arrows">
-            <button @click="layerUp(layers,key)">&#128316</button>
+            <button @click="layerUp(layerPreview.name)">&#128316</button>
             <button @click="$delete(layers,key)">🗑️</button>
-            <button @click="layerDown(layers,key)">&#128317</button>
+            <button @click="layerDown(layerPreview.name)">&#128317</button>
           </div>
         </li>
       </ul>
@@ -52,7 +54,7 @@ export default {
           width: 500,
           height: 400,
           draggable: true,
-          name: "Raya"
+          name: "Stripe"
         },
         {
           image: null,
@@ -200,43 +202,52 @@ export default {
       });
     },
 
-    download() {
-      const pictu = document.getElementsByTagName("canvas");
-      pictu[0].setAttribute("crossOrigin", "anonymous");
-      console.log(pictu[0]);
-      pictu[0].toDataURL("image/png");
-    }, //Can´t do because of CORS permission
-
-    layerUp(layerPreview,key) {
-      const layer = this.$refs.layer.getStage();
-      layerPreview.moveUp();
-      layer.draw();
+    downloadURI(uri, name) {
+      let link = document.createElement("a");
+      link.download = name;
+      link.href = uri;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      link = "";
     },
-    layerDown(layerPreview,key) {
+
+    download() {
+      const stage = this.$refs.stage.getStage();
+      let dataURL = stage.toDataURL();
+      this.downloadURI(dataURL, "stage.png");
+    },
+
+    layerUp(name) {
+      const stage = this.$refs.stage.getStage();
+      const layer = this.$refs.layer.getStage();
+      const pic = stage.find(name);
+      console.log(pic);
+      console.log(name);
+      this.layers.moveToTop();
+      stage.draw();
+    },
+    layerDown(name) {
       const layer = this.$refs.layer.getStage();
       layerPreview.moveDown();
       layer.draw();
-    }
+    },
+    crop() {}
   },
   computed: {},
   created() {
     const image = new window.Image();
-    //image.setAttribute("crossOrigin", "anonymous");
-    //image.crossOrigin="anonymous"
+    
     image.origin = "anonymous";
-    image.src =
-      "https://www.visitlagraciosa.com/wp-content/uploads/2019/07/buceo-la-graciosa-lanzarote-raya.jpg";
-
+    image.src = require("../assets/stripe.jpg");
     image.onload = () => {
       // set image only when it is loaded
       this.layers[0].image = image;
     };
     const image2 = new window.Image();
     image2.origin = "anonymous";
-    //image2.setAttribute("crossOrigin", "anonymous");
-    //image2.crossOrigin="anonymous"
-    image2.src =
-      "https://www.ahorasemanal.es/media/images/numero%2032/horizontal/CAP_00601417h.jpg";
+    
+    image2.src = require("../assets/lynx.jpg");
 
     image2.onload = () => {
       // set image only when it is loaded
