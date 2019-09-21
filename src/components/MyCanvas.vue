@@ -2,7 +2,13 @@
   <div id="myTest" class="layout">
     <v-stage class="myCanvas" ref="stage" :config="stageSize" @mousedown="handleStageMouseDown">
       <v-layer ref="layer">
-        <v-image ref="imageLayer" v-for="item in layers" :key="item.id" :config="item" />
+        <v-image
+          crossorigin="anonymous"
+          ref="imageLayer"
+          v-for="item in layers"
+          :key="item.id"
+          :config="item"
+        />
         <v-transformer ref="transformer" />
       </v-layer>
     </v-stage>
@@ -13,6 +19,7 @@
         <button @click="createRect">Create Rect</button>
         <button @click="brush">Brush</button>
         <button @click="eraser">Eraser</button>
+        <!-- <button @click="download">Download</button> -->
       </div>
 
       <span class="lay">Layers</span>
@@ -184,20 +191,35 @@ export default {
         this.lastLine.points(newPoints);
         layer.batchDraw();
       });
-    }
+    },
+
+    download() {
+      const pictu = document.getElementsByTagName("canvas");
+      pictu[0].setAttribute("crossOrigin", "anonymous");
+      console.log(pictu[0]);
+      pictu[0].toDataURL("image/png");
+    } //Can´t do because of CORS permission
   },
   computed: {},
   created() {
     const image = new window.Image();
+    //image.setAttribute("crossOrigin", "anonymous");
+    //image.crossOrigin="anonymous"
+    image.origin = "anonymous";
     image.src =
       "https://www.visitlagraciosa.com/wp-content/uploads/2019/07/buceo-la-graciosa-lanzarote-raya.jpg";
+
     image.onload = () => {
       // set image only when it is loaded
       this.layers[0].image = image;
     };
     const image2 = new window.Image();
+    image2.origin = "anonymous";
+    //image2.setAttribute("crossOrigin", "anonymous");
+    //image2.crossOrigin="anonymous"
     image2.src =
       "https://www.ahorasemanal.es/media/images/numero%2032/horizontal/CAP_00601417h.jpg";
+
     image2.onload = () => {
       // set image only when it is loaded
       this.layers[1].image = image2;
