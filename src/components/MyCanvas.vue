@@ -240,7 +240,6 @@ export default {
     image.origin = "anonymous";
     image.src = require("../assets/stripe.jpg");
     image.onload = () => {
-      // set image only when it is loaded
       this.layers[0].image = image;
     };
     const image2 = new window.Image();
@@ -249,7 +248,6 @@ export default {
     image2.src = require("../assets/lynx.jpg");
 
     image2.onload = () => {
-      // set image only when it is loaded
       this.layers[1].image = image2;
     };
   }
